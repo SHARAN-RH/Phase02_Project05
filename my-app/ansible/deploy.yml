@@ -1,9 +1,18 @@
 - name: Deploy app container on remote server
   hosts: all
-  become: true
   tasks:
     - name: Stop old container (if any)
       shell: docker rm -f myapp || true
 
+    - name: Copy project files to remote
+      synchronize:
+        src: ../
+        dest: /home/test/myapp/
+        delete: yes
+        recursive: yes
+
+    - name: Build Docker image on remote
+      shell: docker build -t myapp:latest /home/test/myapp/
+
     - name: Run new container
-      shell: docker run -d --name myapp -p 80:5000 myapp:latest
+      shell: docker run -d --name myapp -p 80:5000 myapp:latestt
