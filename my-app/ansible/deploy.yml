@@ -11,7 +11,7 @@
 
     - name: Copy app.py and Dockerfile to remote
       copy:
-        src: my-app/
+        src: ../
         dest: /home/test/myapp/
         mode: preserve
 
