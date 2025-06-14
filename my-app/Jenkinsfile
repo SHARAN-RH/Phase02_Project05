@@ -15,7 +15,7 @@ pipeline {
         stage('Generate Dockerfile') {
             steps {
                 script {
-                    writeFile file: 'Dockerfile', text: '''
+                    writeFile file: 'my-app/Dockerfile', text: '''
 FROM python:3.9-slim
 
 WORKDIR /app
@@ -32,8 +32,10 @@ CMD ["python", "app.py"]
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    docker.build("${IMAGE_NAME}:latest")
+		dir('my-app') {  
+                	script {
+                    		docker.build("${IMAGE_NAME}:latest")
+			}
                 }
             }
         }
@@ -41,8 +43,8 @@ CMD ["python", "app.py"]
         stage('Deploy with Ansible') {
             steps {
                 ansiblePlaybook credentialsId: 'ansible-ssh-key',
-                                 inventory: 'ansible/inventory',
-                                 playbook: 'ansible/deploy.yml'
+                                 inventory: 'my-app/ansible/inventory',
+                                 playbook: 'my-app/ansible/deploy.yml'
             }
         }
     }
